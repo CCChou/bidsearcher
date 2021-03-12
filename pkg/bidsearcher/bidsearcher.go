@@ -50,7 +50,10 @@ func (b *BidSearcher) Search(keywork string) []Bid {
 		s = s.Find("td").Eq(1)
 		html, _ := s.Html()
 		text := s.SetHtml(strings.Replace(html, "<br/>", "<br/>\n", -1)).Text()
-		bid := b.parse(text)
+		bid, err := b.parse(text)
+		if err != nil {
+			log.Fatal(err)
+		}
 		bids = append(bids, bid)
 
 	})
