@@ -14,8 +14,8 @@ var baseDir string = "files/"
 
 func Serve() {
 	mux := http.NewServeMux()
-	mux.Handle("/files/", http.StripPrefix("/files/", http.FileServer(http.Dir("./files"))))
 	mux.Handle("/", http.FileServer(http.Dir("./frontend/build")))
+	mux.HandleFunc("/files/", downloadCsv)
 	mux.HandleFunc("/search", search)
 	http.ListenAndServe(":8080", mux)
 }
@@ -23,6 +23,12 @@ func Serve() {
 type Response struct {
 	Url    string `json:"url"`
 	Status string `json:"status"`
+}
+
+func downloadCsv(w http.ResponseWriter, r *http.Request) {
+	handle := http.StripPrefix("/files/", http.FileServer(http.Dir("./files")))
+	w.Header().Set("Content-Encoding", "text/csv")
+	handle.ServeHTTP(w, r)
 }
 
 func search(w http.ResponseWriter, r *http.Request) {
