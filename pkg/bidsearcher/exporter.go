@@ -8,7 +8,7 @@ import (
 )
 
 type Exporter interface {
-	Export(bids []*Bid) error
+	Export(bids []*Bid, path string) error
 }
 
 func NewExporter() Exporter {
@@ -18,8 +18,9 @@ func NewExporter() Exporter {
 type CsvExporter struct {
 }
 
-func (c *CsvExporter) Export(bids []*Bid) error {
-	csvFiles, err := os.Create("./bids.csv")
+func (c *CsvExporter) Export(bids []*Bid, path string) error {
+	log.Printf("Save to %s", path)
+	csvFiles, err := os.Create(path)
 	if err != nil {
 		return err
 	}

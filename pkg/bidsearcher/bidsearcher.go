@@ -37,14 +37,15 @@ func NewBidSearcher() *BidSearcher {
 	}
 }
 
-func (b *BidSearcher) Search(keywork string) []*Bid {
+func (b *BidSearcher) Search(keyword string) []*Bid {
+	log.Printf("Search %s", keyword)
 	err := b.login()
 	if err != nil {
 		log.Fatal("Login", err)
 	}
 
 	var bids []*Bid
-	doc, err := b.getDocumentByPost(b.baseUrl+b.searchPath, url.Values{"DataType": {"OBJ"}, "Keyword": {"機油"}})
+	doc, err := b.getDocumentByPost(b.baseUrl+b.searchPath, url.Values{"DataType": {"OBJ"}, "Keyword": {keyword}})
 	if err != nil {
 		log.Fatal(b.baseUrl+b.searchPath, err)
 	}
