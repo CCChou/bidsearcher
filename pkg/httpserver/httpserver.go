@@ -27,7 +27,7 @@ type Response struct {
 
 func downloadCsv(w http.ResponseWriter, r *http.Request) {
 	handle := http.StripPrefix("/files/", http.FileServer(http.Dir("./files")))
-	w.Header().Set("Content-Encoding", "text/csv")
+	w.Header().Set("Content-Type", "application/vnd.ms-excel")
 	handle.ServeHTTP(w, r)
 }
 
