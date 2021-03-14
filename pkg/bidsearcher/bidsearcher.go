@@ -107,6 +107,7 @@ func (b *BidSearcher) parse(text string) (*Bid, error) {
 	lines := strings.Split(text, "\n")
 	var cleanLines []string
 	for _, line := range lines {
+		line = strings.TrimSpace(line)
 		if line != "" {
 			cleanLines = append(cleanLines, line)
 		}
@@ -118,7 +119,7 @@ func (b *BidSearcher) parse(text string) (*Bid, error) {
 	var err error
 	var award int
 	var date time.Time
-	if len(cleanLines) == 4 {
+	if len(cleanLines) > 4 {
 		re := regexp.MustCompile(`[\d,/]+`)
 		matches := re.FindAllString(cleanLines[3], -1)
 		award, err = strconv.Atoi(strings.ReplaceAll(matches[0], ",", ""))
