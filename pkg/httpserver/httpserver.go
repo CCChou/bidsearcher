@@ -14,7 +14,8 @@ var baseDir string = "files/"
 
 func Serve() {
 	mux := http.NewServeMux()
-	mux.Handle("/files", http.FileServer(http.Dir("./files")))
+	mux.Handle("/files/", http.StripPrefix("/files/", http.FileServer(http.Dir("./files"))))
+	mux.Handle("/", http.FileServer(http.Dir("./frontend/build")))
 	mux.HandleFunc("/search", search)
 	http.ListenAndServe(":8080", mux)
 }
