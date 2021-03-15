@@ -27,7 +27,7 @@ func (c *CsvExporter) Export(bids []*Bid, path string) error {
 	w := csv.NewWriter(csvFiles)
 	err = c.writeHeader(w)
 	if err != nil {
-		return nil
+		return err
 	}
 	for _, bid := range bids {
 		record := c.toRecord(bid)
