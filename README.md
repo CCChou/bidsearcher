@@ -26,7 +26,7 @@ Run application
 go run ./cmd/main.go
 ```
 
-Register the application to service
+Register the application as service
 ```
 [Unit]
 Description=BidSearcher Service
