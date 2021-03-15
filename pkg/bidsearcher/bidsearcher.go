@@ -2,6 +2,7 @@ package bidsearcher
 
 import (
 	"errors"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
@@ -45,13 +46,13 @@ func (b *BidSearcher) Search(keyword string) []*Bid {
 	log.Printf("Search %s", keyword)
 	err := b.login()
 	if err != nil {
-		log.Fatal("Login", err)
+		log.Fatal(err)
 	}
 
 	var bids []*Bid
 	doc, err := b.getDocumentByPost(b.baseUrl+b.searchPath, url.Values{"DataType": {"OBJ"}, "Keyword": {keyword}})
 	if err != nil {
-		log.Fatal(b.baseUrl+b.searchPath, err)
+		log.Println(b.baseUrl+b.searchPath, err)
 	}
 	bids = append(bids, b.getBids(doc)...)
 
@@ -62,7 +63,7 @@ func (b *BidSearcher) Search(keyword string) []*Bid {
 		}
 		doc, err = b.getDocumentByGet(nextPage)
 		if err != nil {
-			log.Fatal(nextPage, err)
+			log.Println(nextPage, err)
 		}
 		bids = append(bids, b.getBids(doc)...)
 	}
@@ -76,6 +77,14 @@ func (b *BidSearcher) login() error {
 	}
 	if resp.StatusCode != 200 {
 		return errors.New("Log in failed with " + strconv.Itoa(resp.StatusCode))
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	bodyString := string(body)
+	if strings.Contains(bodyString, "帳號或密碼輸入錯誤") {
+		return errors.New("Login failed with wrong username or password")
 	}
 	return nil
 }
@@ -101,7 +110,7 @@ func (b *BidSearcher) getBids(doc *goquery.Document) []*Bid {
 		text := s.SetHtml(strings.Replace(html, "<br/>", "<br/>\n", -1)).Text()
 		bid, err := b.parse(text)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		bids = append(bids, bid)
 	})

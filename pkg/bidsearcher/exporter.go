@@ -32,7 +32,7 @@ func (c *CsvExporter) Export(bids []*Bid, path string) error {
 	for _, bid := range bids {
 		record := c.toRecord(bid)
 		if err := w.Write(record); err != nil {
-			log.Fatalln("error writing record to file", err)
+			log.Println("error writing record to file", err)
 		}
 	}
 	return nil
