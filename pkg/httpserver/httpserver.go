@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"hash/fnv"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/CCChou/bidsearcher/pkg/bidsearcher"
@@ -32,7 +33,7 @@ func downloadCsv(w http.ResponseWriter, r *http.Request) {
 }
 
 func search(w http.ResponseWriter, r *http.Request) {
-	keyword := r.URL.Query().Get("keyword")
+	keyword := strings.TrimSpace(r.URL.Query().Get("keyword"))
 	b := bidsearcher.NewBidSearcher()
 	bids := b.Search(keyword)
 	e := bidsearcher.NewExporter()
