@@ -19,9 +19,11 @@ type BidSearcher struct {
 	baseUrl    string
 	loginPath  string
 	searchPath string
+	username   string
+	password   string
 }
 
-func NewBidSearcher() *BidSearcher {
+func NewBidSearcher(username string, password string) *BidSearcher {
 	jar, err := cookiejar.New(nil)
 	if err != nil {
 		panic(err)
@@ -34,6 +36,8 @@ func NewBidSearcher() *BidSearcher {
 		baseUrl:    "https://www.taiwanbuying.com.tw/",
 		loginPath:  "MemLoginAction.asp",
 		searchPath: "QueryCloseCaseAction.ASP",
+		username:   username,
+		password:   password,
 	}
 }
 
@@ -66,7 +70,7 @@ func (b *BidSearcher) Search(keyword string) []*Bid {
 }
 
 func (b *BidSearcher) login() error {
-	resp, err := b.client.PostForm(b.baseUrl+b.loginPath, url.Values{"LogID": {"cindy886637"}, "PWD": {"Inipass07242020"}, "Submit": {"送出"}})
+	resp, err := b.client.PostForm(b.baseUrl+b.loginPath, url.Values{"LogID": {b.username}, "PWD": {b.password}, "Submit": {"送出"}})
 	if err != nil {
 		return err
 	}

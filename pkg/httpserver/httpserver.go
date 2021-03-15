@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"hash/fnv"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -12,13 +13,24 @@ import (
 )
 
 var baseDir string = "files/"
+var config *Config
 
 func Serve() {
+	InitConfig()
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(http.Dir("./frontend/build")))
 	mux.HandleFunc("/files/", downloadCsv)
 	mux.HandleFunc("/search", search)
 	http.ListenAndServe(":8080", mux)
+}
+
+func InitConfig() {
+	var err error
+	config, err = NewConfig()
+	if err != nil {
+		log.Fatal("Init config failed")
+		panic(err)
+	}
 }
 
 type Response struct {
@@ -34,7 +46,7 @@ func downloadCsv(w http.ResponseWriter, r *http.Request) {
 
 func search(w http.ResponseWriter, r *http.Request) {
 	keyword := strings.TrimSpace(r.URL.Query().Get("keyword"))
-	b := bidsearcher.NewBidSearcher()
+	b := bidsearcher.NewBidSearcher(config.Username, config.Password)
 	bids := b.Search(keyword)
 	e := bidsearcher.NewExporter()
 	h := fnv.New64a()
