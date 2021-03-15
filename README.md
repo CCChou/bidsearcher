@@ -15,7 +15,20 @@ Compile frontend page
 npm run build
 ```
 
+Back to project directory
+```
+cd ..
+```
+
+Create directory for temp csv files
+```
+mkdir files
+```
+
 Modify the config.yml
+```
+vi configs/config.yml
+```
 ```
 username: xxx
 password: yyy
