@@ -4,25 +4,33 @@ import PropTypes from "prop-types";
 class SearchBar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { text: "", loading: false };
+    this.state = { text: "" };
     this.onClickHandler = props.onClickHandler;
+    this.onLoadingHandler = props.onLoadingHandler;
     this.getTextValue = this.getTextValue.bind(this);
   }
 
   static get propTypes() {
     return {
       onClickHandler: PropTypes.func,
+      onLoadingHandler: PropTypes.func,
     };
   }
 
   getTextValue() {
     let searchBar = this;
+    searchBar.onLoadingHandler(true);
     fetch(window.location.href + "search?keyword=" + this.state.text)
       .then((res) => res.json())
       .then(function (jsonData) {
+        searchBar.onLoadingHandler(false);
         if (jsonData.status === "OK") {
           searchBar.onClickHandler(jsonData.url);
         }
+      })
+      .catch((error) => {
+        searchBar.onLoadingHandler(false);
+        console.error("Error: ", error);
       });
   }
 
